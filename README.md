@@ -3,6 +3,6 @@ This is a blender addon for adding features to improve work follow in text edito
 
 The goal of this repository is to combine and update all of the features of free addons.
 
-To use just download as a zip and install it 
+To use just download zip and install it 
 
 Addon is for blender3x and works on latest releases
