@@ -1,5 +1,3 @@
-
-# LET USERS TO MANIPULATE AFTER GENERATED, NOT COMPLETE AT DIALOG
 import bpy
 from bpy.props import *
 
