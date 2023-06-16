@@ -670,18 +670,20 @@ class Prefs(bpy.types.AddonPreferences):
     def draw(self, context):
         layout = self.layout
 
-        split = layout.split()
-        prop = split.column().prop
-        for item in ["show_in_scroll", "case_sensitive", "min_str_len"]:
-            prop(self, item)
-
-        split.column()
+        
+        row = layout.row()
+        col = row.column()
+        col.prop(self, 'show_in_scroll')
+        col.prop(self, 'case_sensitive')
+        col = row.column()
+        col.prop(self, 'min_str_len')
+        col.prop(self, "line_thickness")
 
         split = layout.split()
         col = split.column()
 
         split.column()
-        col.prop(self, "line_thickness")
+        
         col.enabled = self.draw_type in {'LINE', 'FRAME', 'SOLID_FRAME'}
         layout.row().prop(self, "draw_type", expand=True)
         layout.grid_flow(align=True).prop(self, "col_preset", expand=True)
@@ -760,7 +762,8 @@ classes = (
 
     
 )
-
+from .intellisense import register as intel
+from .intellisense import unregister as unintel
 def register():
     from bpy.types import Screen, TEXT_HT_header
     from bpy.utils import register_class
@@ -817,6 +820,7 @@ def register():
     bpy.types.Scene.chichige_add_snippet_props = bpy.props.PointerProperty(type = AddSnippetProps)
     bpy.types.TEXT_MT_templates.append(menu_func)
 
+    intel()
 def unregister():
     bpy.types.TEXT_HT_header.remove(Prefs.add_to_header)
     set_draw(state=False)
@@ -857,7 +861,6 @@ def unregister():
     module._console = None
     for w in bpy.context.window_manager.windows:
         w.screen.pop('console_redirect', None)
-
-
+    unintel
 from .consol import backup_print
 backup_print()

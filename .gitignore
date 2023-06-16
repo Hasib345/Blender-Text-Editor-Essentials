@@ -5,3 +5,15 @@ __pycache__/consol.cpython-310.pyc
 __pycache__/expand.cpython-310.pyc
 __pycache__/Search.cpython-310.pyc
 __pycache__/temp.cpython-310.pyc
+intellisense/__pycache__/__init__.cpython-37.pyc
+intellisense/__pycache__/__init__.cpython-310.pyc
+intellisense/__pycache__/Intellisense.cpython-310.pyc
+intellisense/lib/console/__pycache__/__init__.cpython-37.pyc
+intellisense/lib/console/__pycache__/__init__.cpython-310.pyc
+intellisense/lib/console/__pycache__/complete_calltip.cpython-37.pyc
+intellisense/lib/console/__pycache__/complete_calltip.cpython-310.pyc
+intellisense/lib/console/__pycache__/complete_import.cpython-37.pyc
+intellisense/lib/console/__pycache__/complete_namespace.cpython-37.pyc
+intellisense/lib/console/__pycache__/complete_namespace.cpython-310.pyc
+intellisense/lib/console/__pycache__/intellisense.cpython-37.pyc
+intellisense/lib/console/__pycache__/intellisense.cpython-310.pyc
