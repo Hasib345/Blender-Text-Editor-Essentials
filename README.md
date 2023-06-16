@@ -9,6 +9,20 @@ Addon is for blender3x and works on latest releases
 
 Features:
 
-1. THE CODE EDITOR: 
-Minimap, text tabs, whitespace markers and indent guides:
-![image](https://github.com/Hasib345/Blender-Text-Editor-Essentials/assets/110894104/a3f336e5-10c2-4214-a79b-759ef01af08c)
+1. INTELLISENSE/AUTO COMPLETE:
+![](https://blenderartists.org/uploads/default/original/4X/8/d/5/8d5f9520b1fbc525cbd50f7ce145858749de8fd9.gif)
+Shotcut:(Ctrl + Shift + Space)
+By Mackraken and Tintwotin
+
+
+
+2. THE CODE EDITOR: 
+Minimap, text tabs, whitespace markers and indent guides
+![](https://blenderartists.org/uploads/default/original/4X/0/0/a/00a4b3bdf5d1e2dc67ce56b8f6af263f0859b86e.gif)
+By Mackraken and Tintwotin
+
+
+
+3.ADDON TEMPLATE GENERATOR:
+![](https://blenderartists.org/uploads/default/original/4X/7/e/5/7e5849b913455345ef1a46f61242e489bf42462d.gif)
+By chichige-bobo, tintwotin
