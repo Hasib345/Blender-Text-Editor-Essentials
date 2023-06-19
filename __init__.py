@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Text Editor Essentials",
     "location": "Text Editor > Right Click Menu",
-    "version": (0, 5, 0),
+    "version": (1, 0, 0),
     "blender": (3, 0, 0),
     "description": "Better editor for coding",
     "author": "Hasib345",
@@ -35,8 +35,6 @@ from .code_editor import (CE_OT_cursor_set, CE_OT_mouse_move, CE_OT_scroll, CE_P
     )
 
 from .consol import update_assume_print , TEXT_PT_run_in_console_settings
-
-
 import bpy
 from gpu.shader import from_builtin
 from mathutils import Vector

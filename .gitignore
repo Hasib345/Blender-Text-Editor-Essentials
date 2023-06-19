@@ -17,3 +17,5 @@ intellisense/lib/console/__pycache__/complete_namespace.cpython-37.pyc
 intellisense/lib/console/__pycache__/complete_namespace.cpython-310.pyc
 intellisense/lib/console/__pycache__/intellisense.cpython-37.pyc
 intellisense/lib/console/__pycache__/intellisense.cpython-310.pyc
+search_online/__pycache__/__init__.cpython-310.pyc
+.gitignore

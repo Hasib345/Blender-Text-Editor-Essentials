@@ -3,7 +3,6 @@ from bpy.types import Operator
 from bpy.props import (
     EnumProperty,StringProperty
 )
-from temp import register, unregister
 
 
 class TEXT_OT_online_reference(Operator):
