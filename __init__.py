@@ -28,9 +28,7 @@ bl_info = {
     "wiki_url":"https://github.com/Hasib345/Blender-Text-Editor-Essentials"
 }
 import bpy
-
-
-
+import re
 from .code_editor import (CE_OT_cursor_set, CE_OT_mouse_move, CE_OT_scroll, CE_PG_settings,
     CE_PT_settings_panel, WM_OT_mouse_catcher, 
     set_draw, update_prefs ,ce_manager
@@ -731,7 +729,6 @@ class Prefs(bpy.types.AddonPreferences):
             context="",
             category="")
 
-from .Search import TEXT_OT_online_reference, panel1_append, panel_append  
 from .expand import TEXT_OT_expand_to_brackets
 from .temp import( AddSnippetOp_Props, AddSnippetOp_Samples, 
     AddSnippetPanel, AddSnippetProps, AddonTemplateGeneratorOp, 
@@ -749,7 +746,6 @@ classes = (
     WM_OT_mouse_catcher,
     CE_PG_settings,
     TEXT_OT_expand_to_brackets,
-    TEXT_OT_online_reference,
     AddSnippetProps,
     AddSnippetPanel,
     TEXT_PT_generator_properties,
@@ -762,8 +758,8 @@ classes = (
 
     
 )
-from .intellisense import register as intel
-from .intellisense import unregister as unintel
+from .intellisense import register as intellisense_register , unregister as intellisense_unregister
+from .search_online import register as search_online_register , unregister as search_online_unregister
 def register():
     from bpy.types import Screen, TEXT_HT_header
     from bpy.utils import register_class
@@ -794,12 +790,7 @@ def register():
     prefs.enable = True
 
     # Search Online
-    bpy.types.TEXT_MT_edit.append(panel_append)
-    bpy.types.TEXT_MT_context_menu.append(panel_append)
-    bpy.types.CONSOLE_MT_context_menu.append(panel_append)
-    bpy.types.INFO_MT_context_menu.append(panel_append)
-    bpy.types.INFO_HT_header.append(panel1_append)
-    bpy.types.CONSOLE_MT_console.append(panel_append)
+    search_online_register()
 
     # Run in consol
     from .consol import classe , _module , Console , c_dict
@@ -820,8 +811,10 @@ def register():
     bpy.types.Scene.chichige_add_snippet_props = bpy.props.PointerProperty(type = AddSnippetProps)
     bpy.types.TEXT_MT_templates.append(menu_func)
 
-    intel()
+    intellisense_register()
 def unregister():
+    intellisense_unregister()
+
     bpy.types.TEXT_HT_header.remove(Prefs.add_to_header)
     set_draw(state=False)
     for km, kmi in register.keymaps:
@@ -837,12 +830,8 @@ def unregister():
     prefs = bpy.context.preferences.addons[__name__].preferences
     prefs.enable = False
     
-    bpy.types.TEXT_MT_edit.remove(panel_append)
-    bpy.types.TEXT_MT_context_menu.remove(panel_append)
-    bpy.types.CONSOLE_MT_context_menu.remove(panel_append)    
-    bpy.types.INFO_MT_context_menu.remove(panel_append)
-    bpy.types.INFO_HT_header.remove(panel1_append)    
-    bpy.types.CONSOLE_MT_console.remove(panel_append)
+    search_online_unregister()
+
     bpy.types.TEXT_MT_templates.remove(menu_func)
     del bpy.types.Scene.chichige_add_snippet_props
 
@@ -861,6 +850,6 @@ def unregister():
     module._console = None
     for w in bpy.context.window_manager.windows:
         w.screen.pop('console_redirect', None)
-    unintel
+    
 from .consol import backup_print
 backup_print()
