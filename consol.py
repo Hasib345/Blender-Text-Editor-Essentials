@@ -245,9 +245,9 @@ class TEXT_OT_run_in_console(bpy.types.Operator):
         kmi = km.keymap_items.new(cls.bl_idname, 'R', 'PRESS', ctrl=True)
         cls._keymaps.append((km, kmi))
 
-        bpy.types.TEXT_HT_header.append(cls.draw_button)
-        bpy.types.CONSOLE_HT_header.append(cls.draw_redirect)
-        bpy.types.TEXT_MT_context_menu.append(cls.draw_button)
+        
+        # bpy.types.CONSOLE_HT_header.append(cls.draw_redirect)
+        # bpy.types.TEXT_HT_header.append(cls.draw_button)
 
 
     @classmethod
@@ -257,9 +257,9 @@ class TEXT_OT_run_in_console(bpy.types.Operator):
 
         cls._keymaps.clear()
 
-        bpy.types.TEXT_HT_header.remove(cls.draw_button)
-        bpy.types.CONSOLE_HT_header.remove(cls.draw_redirect)
-        bpy.types.TEXT_MT_context_menu.remove(cls.draw_button)
+        
+        # bpy.types.CONSOLE_HT_header.remove(cls.draw_redirect)
+        # bpy.types.TEXT_HT_header.remove(cls.draw_button)
 
     @classmethod
     def any_console(cls, context):
@@ -282,13 +282,7 @@ class TEXT_OT_run_in_console(bpy.types.Operator):
             row.operator("console.redirect", depress=enable)
             row.enabled = not enable
 
-    def draw_button(self, context):
-        row = self.layout.row()
-        text = "" if "context_menu" not in self.bl_idname else "Run In Console"
-        row.operator("text.run_in_console", text=text, icon='CONSOLE')
-
-        if not TEXT_OT_run_in_console.any_console(context):
-            row.enabled = False
+        
 
     def execute(self, context):
         spaces = get_console_spaces(context)
@@ -320,28 +314,19 @@ class TEXT_PT_run_in_console_settings(bpy.types.Panel):
         prefs = _preferences
 
         col = layout.column()
-        col.prop(prefs, "assume_print")
-
         col.label(text="Run In Console Settings")
         col.prop(prefs, "persistent")
-
         col.prop(prefs, 'clear_bindings')
-
         if prefs.clear_bindings:
-
             split = col.split(factor=0.025)
             split.separator()
             subcol = split.column()
             subcol.prop(prefs, 'keep_math')
             subcol.prop(prefs, 'keep_mathutils')
             subcol.prop(prefs, 'keep_vars')
-
         col.prop(prefs, 'show_name')
         col.prop(prefs, 'show_time')
-
-        # only display if accessed from the text editor
-        if context.area.type == 'TEXT_EDITOR':
-            col.operator("text.run_in_console", text="Run In Console")
+        col.prop(prefs, "assume_print")
 
 
 class CONSOLE_OT_redirect(bpy.types.Operator):

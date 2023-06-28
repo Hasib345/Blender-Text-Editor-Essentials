@@ -1085,32 +1085,11 @@ def timer(func, *args, delay=0, init=False):
     if init:
         func(*args)
         return
-    bpy.app.timers.register(lambda: timer(func, *args, init=True),
+    try:
+        bpy.app.timers.register(lambda: timer(func, *args, init=True),
                             first_interval=delay)
-
-
-class CE_PT_settings_panel(bpy.types.Panel):  # display settings in header
-    bl_idname = 'CE_PT_settings'
-    bl_space_type = 'TEXT_EDITOR'
-    bl_region_type = 'WINDOW'
-    bl_label = "Code Editor"
-    bl_ui_units_x = 8
-
-    def draw(self, context):
-        if is_text(context.edit_text):
-            ce_props = get_ce(context).props
-            layout = self.layout
-            layout.prop(ce_props, "show_minimap")
-            layout.prop(ce_props, "show_tabs")
-            layout.prop(ce_props, "show_indents")
-            layout.prop(ce_props, "show_whitespace")
-            layout.operator(
-                "preferences.addon_show", text="Open Settings"
-            ).module = __name__
-
-
-
-
+    except RuntimeError:
+        pass
 
 def set_draw(state=True):
     from bpy_restrict_state import _RestrictContext
@@ -1130,6 +1109,22 @@ def set_draw(state=True):
             if a.type == 'TEXT_EDITOR':
                 a.tag_redraw()
 
+class CE_PT_settings_panel(bpy.types.Panel):  # display settings in header
+    bl_idname = 'CE_PT_setting'
+    bl_space_type = 'TEXT_EDITOR'
+    bl_region_type = 'WINDOW'
+    bl_label = ""
+    bl_ui_units_x = 8
+
+    def draw(self, context):
+        if is_text(context.edit_text):
+            ce_props = get_ce(context).props
+            layout = self.layout
+            layout.prop(ce_props, "show_minimap")
+            layout.prop(ce_props, "show_tabs")
+            layout.prop(ce_props, "show_indents")
+            layout.prop(ce_props, "show_whitespace")
+            
 
 class CE_PG_settings(bpy.types.PropertyGroup):
     from bpy.props import BoolProperty

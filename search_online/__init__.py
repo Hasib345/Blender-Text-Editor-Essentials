@@ -25,24 +25,24 @@ class TEXT_OT_online_reference(Operator):
              default={'API'},
         )
         
-    s: StringProperty(default='')
+    search: StringProperty(default='')
 
     def execute(self, context): 
         
-        s=self.s        
+        search=self.search        
 
         if context.area.type == 'TEXT_EDITOR' and context.space_data.text:  
             
             text = context.space_data.text
-            s = self.get_selected_text(text)
+            search = self.get_selected_text(text)
             
-            if s is None:
+            if search is None:
                 bpy.ops.text.select_word()
-                s = self.get_selected_text(text)
+                search = self.get_selected_text(text)
 
         if context.area.type == 'CONSOLE':
             
-            s=self.s            
+            search=self.search           
             sc=context.space_data 
             
             if sc.select_start==sc.select_end or sc.select_start==sc.select_end+1:
@@ -51,14 +51,14 @@ class TEXT_OT_online_reference(Operator):
                 return {'CANCELLED'}
             else:
                 bpy.ops.console.copy() 
-                s = bpy.context.window_manager.clipboard                    
+                search = bpy.context.window_manager.clipboard                    
                 
         if context.area.type == 'INFO':
         
-            s=self.s            
+            search=self.search            
             sc=context.space_data    
             bpy.ops.info.report_copy()
-            s = bpy.context.window_manager.clipboard
+            search = bpy.context.window_manager.clipboard
 
         if self.type == {'API'}:
             bpy.ops.wm.url_open(url="https://docs.blender.org/api/current/search.html?q="+s)
@@ -142,8 +142,8 @@ def panel1_append(self, context):
     self.layout.separator()
     row = self.layout.row()
     row.prop(context.scene, "toggle_see_all_actions", text="see all actions", icon='HIDE_OFF', toggle=True)
-
 def register():
+    bpy.utils.register_class(TEXT_OT_online_reference)
     bpy.types.TEXT_MT_edit.append(panel_append)
     bpy.types.TEXT_MT_context_menu.append(panel_append)
     bpy.types.CONSOLE_MT_context_menu.append(panel_append)

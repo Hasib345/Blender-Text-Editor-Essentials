@@ -17,12 +17,15 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
+# Code Used by:
+# Mackraken, tintwotin, Hydrocallis ,chichige-bobo#
+
 bl_info = {
     "name": "Text Editor Essentials",
-    "location": "Text Editor > Right Click Menu",
+    "location": "Text Editor",
     "version": (1, 0, 0),
     "blender": (3, 0, 0),
-    "description": "Better editor for coding",
+    "description": "Better Text Editor for coding",
     "author": "Hasib345",
     "category": "Text Editor",
     "wiki_url":"https://github.com/Hasib345/Blender-Text-Editor-Essentials"
@@ -34,7 +37,7 @@ from .code_editor import (CE_OT_cursor_set, CE_OT_mouse_move, CE_OT_scroll, CE_P
     set_draw, update_prefs ,ce_manager
     )
 
-from .consol import update_assume_print , TEXT_PT_run_in_console_settings
+from .consol import TEXT_OT_run_in_console, update_assume_print , TEXT_PT_run_in_console_settings
 import bpy
 from gpu.shader import from_builtin
 from mathutils import Vector
@@ -713,27 +716,20 @@ class Prefs(bpy.types.AddonPreferences):
 
         layout.separator()
 
-        return TEXT_PT_run_in_console_settings.draw(self, context)
 
-    def draw_menu(self, context):
-        prefs = bpy.context.preferences.addons[__name__].preferences
-        self.layout.prop(prefs, "enable")
+def add_to_header(self, context):
+    layout = self.layout
+    row = layout.row(align = True)
+    row.operator("preferences.addon_show", text="", icon = 'SETTINGS').module = __name__
+    row.popover(CE_PT_settings_panel.bl_idname)
+    row = layout.row(align=True)
+    text = "" if "context_menu" not in self.bl_idname else "Run In Console"
+    row.operator("text.run_in_console", text=text, icon='CONSOLE')
+    if not TEXT_OT_run_in_console.any_console(context):
+        row.enabled = False
+    row.popover('TEXT_PT_run_in_console_settings')
 
-    def add_to_header(self, context):
-        layout = self.layout
-        layout.popover_group(
-            "TEXT_EDITOR",
-            region_type="WINDOW",
-            context="",
-            category="")
-
-from .expand import TEXT_OT_expand_to_brackets
-from .temp import( AddSnippetOp_Props, AddSnippetOp_Samples, 
-    AddSnippetPanel, AddSnippetProps, AddonTemplateGeneratorOp, 
-    TEXT_PT_generator_code_samples, TEXT_PT_generator_keymapping, 
-    TEXT_PT_generator_panel_place, TEXT_PT_generator_properties, menu_func
-    )
-
+from bpy.types import Screen, TEXT_HT_header
 
 classes = (
     Prefs,
@@ -743,30 +739,18 @@ classes = (
     CE_PT_settings_panel,
     WM_OT_mouse_catcher,
     CE_PG_settings,
-    TEXT_OT_expand_to_brackets,
-    AddSnippetProps,
-    AddSnippetPanel,
-    TEXT_PT_generator_properties,
-    TEXT_PT_generator_panel_place,
-    TEXT_PT_generator_code_samples,
-    TEXT_PT_generator_keymapping,
-    AddonTemplateGeneratorOp,
-    AddSnippetOp_Props,
-    AddSnippetOp_Samples
-
-    
-)
+    )
 from .intellisense import register as intellisense_register , unregister as intellisense_unregister
 from .search_online import register as search_online_register , unregister as search_online_unregister
+from .templetes import register as templetes_register , unregister as templetes_unregister
+from .expand import register as expand_register , unregister as expand_unregister
 def register():
-    from bpy.types import Screen, TEXT_HT_header
-    from bpy.utils import register_class
 
     for cls in classes:
-        register_class(cls)
+        bpy.utils.register_class(cls)
 
+    TEXT_HT_header.append(add_to_header)
     Screen.code_editors = bpy.props.CollectionProperty(type=CE_PG_settings)
-    TEXT_HT_header.append(Prefs.add_to_header)
     kc = bpy.context.window_manager.keyconfigs.addon.keymaps
     km = kc.get('Text', kc.new('Text', space_type='TEXT_EDITOR'))
     new = km.keymap_items.new
@@ -779,18 +763,13 @@ def register():
     if mod:
         addon_utils.module_bl_info(mod)["show_expanded"] = True
 
-    # brackets Expand
-    TEXT_OT_expand_to_brackets._setup()
+    
     # Highlight
     import sys
     prefs = bpy.context.preferences.addons[__name__].preferences
     sys.modules[__name__].p = prefs
     prefs.enable = True
 
-    # Search Online
-    search_online_register()
-
-    # Run in consol
     from .consol import classe , _module , Console , c_dict
     for cls in classe():
         bpy.utils.register_class(cls)
@@ -805,13 +784,13 @@ def register():
     c_dict.update(window_manager=context.window_manager)
     update_assume_print(prefs, context)
 
-    # Temepletes
-    bpy.types.Scene.chichige_add_snippet_props = bpy.props.PointerProperty(type = AddSnippetProps)
-    bpy.types.TEXT_MT_templates.append(menu_func)
-
+    templetes_register()
+    expand_register()
+    search_online_register()
     intellisense_register()
 def unregister():
     intellisense_unregister()
+    expand_unregister()
 
     bpy.types.TEXT_HT_header.remove(Prefs.add_to_header)
     set_draw(state=False)
@@ -823,15 +802,13 @@ def unregister():
         w.screen.code_editors.clear()
     del bpy.types.Screen.code_editors
 
-    TEXT_OT_expand_to_brackets._remove()
 
     prefs = bpy.context.preferences.addons[__name__].preferences
     prefs.enable = False
     
     search_online_unregister()
 
-    bpy.types.TEXT_MT_templates.remove(menu_func)
-    del bpy.types.Scene.chichige_add_snippet_props
+    templetes_unregister()
 
 
     for cls in reversed(classes):
