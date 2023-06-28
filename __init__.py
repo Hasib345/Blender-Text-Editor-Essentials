@@ -33,7 +33,7 @@ bl_info = {
 import bpy
 import re
 from .code_editor import (CE_OT_cursor_set, CE_OT_mouse_move, CE_OT_scroll, CE_PG_settings,
-    CE_PT_settings_panel, WM_OT_mouse_catcher, 
+    CE_PT_settings_panel, CodeEditorMain, WM_OT_mouse_catcher, 
     set_draw, update_prefs ,ce_manager
     )
 
@@ -474,7 +474,7 @@ def _disable(context, st, prefs):
         del prefs._handle
 
 def update_highlight(self, context):
-    prefs = Prefs
+    prefs = BT_Preference
     st = bpy.types.SpaceTextEditor
     _disable(context, st, prefs)
     if not self.enable:
@@ -492,7 +492,7 @@ def redraw(context):
 
 
 
-class Prefs(bpy.types.AddonPreferences):
+class BT_Preference(bpy.types.AddonPreferences):
     bl_idname = __name__
 
     colors = {
@@ -717,7 +717,7 @@ class Prefs(bpy.types.AddonPreferences):
         layout.separator()
 
 
-def add_to_header(self, context):
+def text_editor_add(self, context):
     layout = self.layout
     row = layout.row(align = True)
     row.operator("preferences.addon_show", text="", icon = 'SETTINGS').module = __name__
@@ -732,13 +732,13 @@ def add_to_header(self, context):
 from bpy.types import Screen, TEXT_HT_header
 
 classes = (
-    Prefs,
+    WM_OT_mouse_catcher,
     CE_OT_mouse_move,
     CE_OT_cursor_set,
     CE_OT_scroll,
     CE_PT_settings_panel,
-    WM_OT_mouse_catcher,
     CE_PG_settings,
+    BT_Preference,
     )
 from .intellisense import register as intellisense_register , unregister as intellisense_unregister
 from .search_online import register as search_online_register , unregister as search_online_unregister
@@ -749,7 +749,8 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    TEXT_HT_header.append(add_to_header)
+    TEXT_HT_header.append(text_editor_add)
+    
     Screen.code_editors = bpy.props.CollectionProperty(type=CE_PG_settings)
     kc = bpy.context.window_manager.keyconfigs.addon.keymaps
     km = kc.get('Text', kc.new('Text', space_type='TEXT_EDITOR'))
@@ -788,11 +789,14 @@ def register():
     expand_register()
     search_online_register()
     intellisense_register()
+
+
 def unregister():
+
     intellisense_unregister()
     expand_unregister()
 
-    bpy.types.TEXT_HT_header.remove(Prefs.add_to_header)
+    TEXT_HT_header.remove(text_editor_add)
     set_draw(state=False)
     for km, kmi in register.keymaps:
         km.keymap_items.remove(kmi)
@@ -807,14 +811,13 @@ def unregister():
     prefs.enable = False
     
     search_online_unregister()
-
     templetes_unregister()
 
-
-    for cls in reversed(classes):
+    for cls in classes:
         bpy.utils.unregister_class(cls)
     redraw(getattr(bpy, "context"))
-    import sys
+
+
     from .consol import _module , classe
     for cls in reversed(classe()):
         if hasattr(cls, '_remove'):

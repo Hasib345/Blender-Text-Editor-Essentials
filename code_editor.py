@@ -6,7 +6,7 @@ from gpu_extras.batch import batch_for_shader
 from bpy.types import Operator
 from collections import defaultdict, deque
 from itertools import repeat
-from . import __name__
+from . import __name__  
 
 is_text = bpy.types.Text.__instancecheck__  # Faster than isinstance(x, bpy.types.Text)
 sh_2d = from_builtin('2D_UNIFORM_COLOR')
@@ -951,7 +951,7 @@ class CodeEditorMain:
         self.props = context.screen.code_editors[index]
 
         p = context.preferences
-        self.ap = ap = p.addons[__name__].preferences
+        self.ap = ap = p.addons[__package__].preferences
         self.text = text = context.edit_text
         self.bg_opacity = ap.opacity
         self.mmw = ap.minimap_width

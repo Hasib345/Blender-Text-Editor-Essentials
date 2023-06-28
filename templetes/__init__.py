@@ -1335,7 +1335,8 @@ class AddSnippetProps(bpy.types.PropertyGroup):
 
 def menu_func(self, context):
     self.layout.operator(AddonTemplateGeneratorOp.bl_idname)
-classes = (AddSnippetProps,
+classes = (
+    AddSnippetProps,
     AddSnippetPanel,
     TEXT_PT_generator_properties,
     TEXT_PT_generator_panel_place,
@@ -1343,7 +1344,8 @@ classes = (AddSnippetProps,
     TEXT_PT_generator_keymapping,
     AddonTemplateGeneratorOp,
     AddSnippetOp_Props,
-    AddSnippetOp_Samples)
+    AddSnippetOp_Samples
+    )
 
 def register():
     for cls in classes:

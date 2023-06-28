@@ -152,6 +152,7 @@ def register():
     bpy.types.CONSOLE_MT_console.append(panel_append)
 
 def unregister():
+    bpy.utils.unregister_class(TEXT_OT_online_reference)
     bpy.types.TEXT_MT_edit.remove(panel_append)
     bpy.types.TEXT_MT_context_menu.remove(panel_append)
     bpy.types.CONSOLE_MT_context_menu.remove(panel_append)    
