@@ -740,15 +740,16 @@ classes = (
     CE_PG_settings,
     BT_Preference,
     )
-from .intellisense import register as intellisense_register , unregister as intellisense_unregister
-from .search_online import register as search_online_register , unregister as search_online_unregister
-from .templetes import register as templetes_register , unregister as templetes_unregister
-from .expand import register as expand_register , unregister as expand_unregister
+from . import intellisense, search_online, templetes, expand
+
+modules = [intellisense, search_online, templetes, expand]
+
 def register():
 
     for cls in classes:
         bpy.utils.register_class(cls)
-
+    for module in modules:
+        module.register()
     TEXT_HT_header.append(text_editor_add)
     
     Screen.code_editors = bpy.props.CollectionProperty(type=CE_PG_settings)
@@ -785,16 +786,13 @@ def register():
     c_dict.update(window_manager=context.window_manager)
     update_assume_print(prefs, context)
 
-    templetes_register()
-    expand_register()
-    search_online_register()
-    intellisense_register()
 
 
 def unregister():
 
-    intellisense_unregister()
-    expand_unregister()
+
+    for module in modules:
+        module.unregister()
 
     TEXT_HT_header.remove(text_editor_add)
     set_draw(state=False)
@@ -809,9 +807,7 @@ def unregister():
 
     prefs = bpy.context.preferences.addons[__name__].preferences
     prefs.enable = False
-    
-    search_online_unregister()
-    templetes_unregister()
+
 
     for cls in classes:
         bpy.utils.unregister_class(cls)
