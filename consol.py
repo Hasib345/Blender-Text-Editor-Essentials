@@ -1,5 +1,7 @@
 import bpy
 from bpy_restrict_state import _RestrictContext
+import collections
+
 
 _console = None
 _preferences = None
@@ -414,4 +416,29 @@ def backup_print():
 
 
 
+def register():
+    for cls in classe():
+        bpy.utils.register_class(cls)
+        if hasattr(cls, '_setup'):
+            cls._setup()
+    from bpy import context
+    addons = context.preferences.addons
+    prefs = addons[__package__].preferences
+    module = _module()
+    module._preferences = prefs
+    module._console = Console()
+    c_dict.update(window_manager=context.window_manager)
+    update_assume_print(prefs, context)
 
+def unregister():
+    for cls in reversed(classe()):
+        if hasattr(cls, '_remove'):
+            cls._remove()
+        bpy.utils.unregister_class(cls)
+    module = _module()
+    module._preferences = None
+    module._console = None
+    for w in bpy.context.window_manager.windows:
+        w.screen.pop('console_redirect', None)
+    
+backup_print()
