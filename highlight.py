@@ -392,7 +392,7 @@ def draw_highlights(context):
     if not substr.strip():
         # Nothing to find
         return
-    p = bpy.context.preferences.addons[__package__].preferences
+    p = context.preferences.addons[__package__].preferences
     if not p.case_sensitive:
         substr = substr.lower()
 
